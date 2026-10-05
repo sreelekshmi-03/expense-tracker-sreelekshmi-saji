@@ -1,0 +1,450 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="A responsive expense tracker for managing income and expenses."
+    >
+
+    <title>Expense Tracker</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="container header-content">
+            <div class="brand">
+                <div class="brand-icon">₹</div>
+
+                <div>
+                    <h1>Expense Tracker</h1>
+                    <p>Manage your money with confidence</p>
+                </div>
+            </div>
+
+            <button
+                class="btn btn-primary"
+                id="openModalBtn"
+                type="button"
+            >
+                <span>+</span>
+                Add Transaction
+            </button>
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <!-- Summary Cards -->
+        <section class="summary-grid" aria-label="Financial summary">
+
+            <article class="summary-card balance-card">
+                <div class="summary-icon balance-icon">₹</div>
+
+                <div>
+                    <p class="summary-label">Current Balance</p>
+                    <h2 id="balance">₹0</h2>
+                </div>
+            </article>
+
+
+            <article class="summary-card income-card">
+                <div class="summary-icon income-icon">↗</div>
+
+                <div>
+                    <p class="summary-label">Total Income</p>
+                    <h2 id="totalIncome">₹0</h2>
+                </div>
+            </article>
+
+
+            <article class="summary-card expense-card">
+                <div class="summary-icon expense-icon">↘</div>
+
+                <div>
+                    <p class="summary-label">Total Expenses</p>
+                    <h2 id="totalExpense">₹0</h2>
+                </div>
+            </article>
+
+        </section>
+
+
+        <!-- Dashboard -->
+        <section class="dashboard-grid">
+
+            <!-- Transactions -->
+            <div class="transactions-section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Transactions</h2>
+                        <p id="transactionCount">0 transactions</p>
+                    </div>
+
+                    <button
+                        class="btn btn-secondary"
+                        id="clearAllBtn"
+                        type="button"
+                    >
+                        Clear All
+                    </button>
+                </div>
+                <div class="filters">
+
+                    <div class="filter-group">
+                        <label for="typeFilter">Type</label>
+
+                        <select id="typeFilter">
+                            <option value="all">All Transactions</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expenses</option>
+                        </select>
+                    </div>
+
+
+                    <div class="filter-group">
+                        <label for="categoryFilter">Category</label>
+
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Health">Health</option>
+                            <option value="Education">Education</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div id="transactionList" class="transaction-list">
+
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">₹</div>
+
+                        <h3>No transactions yet</h3>
+
+                        <p>
+                            Add your first income or expense to get started.
+                        </p>
+
+                        <button
+                            class="btn btn-primary"
+                            id="emptyAddBtn"
+                            type="button"
+                        >
+                            Add Transaction
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <aside class="sidebar">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-eyebrow">OVERVIEW</p>
+                            <h2>Monthly Summary</h2>
+                        </div>
+
+                        <select id="monthFilter" aria-label="Select month">
+                        </select>
+                    </div>
+
+
+                    <div class="monthly-summary">
+
+                        <div class="monthly-item">
+                            <span>Monthly Income</span>
+                            <strong id="monthlyIncome">₹0</strong>
+                        </div>
+
+                        <div class="monthly-item">
+                            <span>Monthly Expenses</span>
+                            <strong id="monthlyExpense">₹0</strong>
+                        </div>
+
+                        <div class="monthly-item monthly-balance">
+                            <span>Monthly Balance</span>
+                            <strong id="monthlyBalance">₹0</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-eyebrow">BREAKDOWN</p>
+                            <h2>Expense Categories</h2>
+                        </div>
+                    </div>
+
+                    <div id="categoryChart" class="category-chart">
+                        <p class="chart-empty">
+                            Add expenses to see your spending breakdown.
+                        </p>
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+    <div
+        class="modal-overlay hidden"
+        id="transactionModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+    >
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <div>
+                    <p class="panel-eyebrow">TRANSACTION</p>
+
+                    <h2 id="modalTitle">
+                        Add Transaction
+                    </h2>
+                </div>
+
+                <button
+                    class="close-btn"
+                    id="closeModalBtn"
+                    type="button"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="transactionForm" novalidate>
+
+                <!-- Transaction Type -->
+                <div class="type-selector">
+
+                    <label class="type-option income-option">
+                        <input
+                            type="radio"
+                            name="transactionType"
+                            value="income"
+                            checked
+                        >
+
+                        <span>
+                            <strong>Income</strong>
+                            <small>Money received</small>
+                        </span>
+                    </label>
+
+
+                    <label class="type-option expense-option">
+                        <input
+                            type="radio"
+                            name="transactionType"
+                            value="expense"
+                        >
+
+                        <span>
+                            <strong>Expense</strong>
+                            <small>Money spent</small>
+                        </span>
+                    </label>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <input
+                        type="text"
+                        id="description"
+                        placeholder="e.g. Grocery shopping"
+                        maxlength="100"
+                        required
+                    >
+
+                    <small class="error-message" id="descriptionError"></small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="amount">
+                        Amount
+                    </label>
+
+                    <div class="amount-input">
+                        <span>₹</span>
+
+                        <input
+                            type="number"
+                            id="amount"
+                            placeholder="0.00"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+
+                    <small class="error-message" id="amountError"></small>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="category">
+                            Category
+                        </label>
+
+                        <select id="category" required>
+
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Entertainment">
+                                Entertainment
+                            </option>
+                            <option value="Health">Health</option>
+                            <option value="Education">Education</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Other">Other</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="date">
+                            Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="date"
+                            required
+                        >
+
+                        <small class="error-message" id="dateError"></small>
+
+                    </div>
+
+                </div>
+                <div
+                    class="form-message hidden"
+                    id="formMessage"
+                    role="alert"
+                ></div>
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="cancelBtn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <span id="submitText">Add Transaction</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+    <div
+        class="modal-overlay hidden"
+        id="deleteModal"
+        role="dialog"
+        aria-modal="true"
+    >
+
+        <div class="confirmation-modal">
+
+            <div class="delete-icon">!</div>
+
+            <h2>Delete Transaction?</h2>
+
+            <p>
+                This transaction will be permanently removed.
+            </p>
+
+            <div class="modal-actions">
+
+                <button
+                    class="btn btn-secondary"
+                    id="cancelDeleteBtn"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    id="confirmDeleteBtn"
+                    type="button"
+                >
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <footer class="site-footer">
+        <p>
+            Expense Tracker &copy; 2026
+        </p>
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
+
